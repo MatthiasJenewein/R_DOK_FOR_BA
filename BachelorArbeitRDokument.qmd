@@ -105,9 +105,9 @@ barplot(aggDataTime$Time,
         names.arg = aggDataTime$Strategy,
         col = "lightblue",
         border = "black",
-        main = "Bar Chart for Cycle Time - Strategy",
+        main = "Bar Chart for Time - Strategy",
         xlab = "Prompting Strategy",
-        ylab = "Average Cycle Time")
+        ylab = "Average Time")
 ```
 
 The barplot shows a clear trend regarding prompting strategies: The better the prompting strategy, the lower the cycle time.
@@ -126,7 +126,7 @@ barplot(aggDataCoverage$`Coverage%`,
         ylim = c(0, 1))
 ```
 
-The barplot shows a clear trend regarding prompting strategies: The better the prompting strategy, the higher the test coverage.
+The bar plot shows a clear trend regarding prompting strategies: The better the prompting strategy, the higher the test coverage. The average test coverage doubles going from low to high.
 
 ```{r}
 aggDataTimeModel <- aggregate(Time ~ Model, data = avgData, FUN = mean)
@@ -136,9 +136,9 @@ barplot(aggDataTimeModel$Time,
         names.arg = aggDataTimeModel$Model,
         col = "lightblue",
         border = "black",
-        main = "Bar Chart for Cycle Time - Model",
+        main = "Bar Chart for Time - Model",
         xlab = "Model",
-        ylab = "Average Cycle Time")
+        ylab = "Average Time")
 ```
 
 The barplot show the average time per model. OpenAI has on average the highest time, followed by Claude 3.5 Sonnet. Google Gemini 2.0 Flash has the lowest average time.
@@ -151,9 +151,9 @@ barplot(aggDataCoverageModel$`Coverage%`,
         names.arg = aggDataCoverageModel$Model,
         col = "lightgreen",
         border = "black",
-        main = "Bar Chart for Cycle Time - Model",
+        main = "Bar Chart for Coverage - Model",
         xlab = "Model",
-        ylab = "Average Cycle Time")
+        ylab = "Average Coverage")
 ```
 
 The barplot show the average coverage per model. Claude 3.5 Sonnet has the highest test coverage, closely followed by OpenAI o3. Google Gemini 2.0 Flash has the lowest test coverage.
@@ -194,11 +194,11 @@ All in, these methods are used in an attempt to provide a comprehensive overview
 
 ## Performing (Statistical) Analysis
 
-### **Cycle Time Analysis**
+### **Time Analysis**
 
 The first part will cover the outcome variable "cycle time" and will perform the mentioned statistical tests to gain insight into the possible relationship between cycle time and prompting strategy and/or model. At first, there will be a correlation analysis for a broad overview. Then followed by anova to gain a more detailed look into the effects across groups. Subsequently, there will be T-Tests to examine each groups more closely. Last but not least, there will be the linear regression analysis to gain more insight into how each strategy influences the generation of unit-tests.
 
-#### Correlation - Cycle Time
+#### Correlation - Time
 
 In the first step, we will have a look at Correlation as a first exploratory phase. This should provide insights into a general direction and if it is even worth to explore further.
 
@@ -215,7 +215,7 @@ The correlation analysis confirms that there is a strong relationship between cy
 
 Although this may seem low, it already works as a good indicator for the overall hypothesis that good prompting strategies lower the cycle time (or time needed to create unit-tests which then lowers cycle time).
 
-#### ANOVA - Cycle Time
+#### ANOVA - Time
 
 Now, we will use anova to gain a more detailed look into the effects across groups.
 
@@ -257,7 +257,7 @@ TukeyHSD(aov_model, "Model")
 
 The TukeyHSD analysis shows no statistical significance for any comparison between the models. The p-value for the comparison between Google Gemini 2.0 Flash and Claude 3.5 Sonnet is close to 0.05 and therefore i could be argued that preferring Claude over Google Gemini would still be beneficial but there is no statistical proof to that.
 
-#### T-Test - Cycle Time
+#### T-Test - Time
 
 In the third step, we will examine each groups more closely using T-Tests.
 
@@ -300,7 +300,7 @@ print(t_test_result)
 
 The pairwise comparison between the two most distinct models "Google Gemini 2.0 Flash" and "Claude 3.5 Sonnet"confirms the prior analysis done. The difference between models (comparing best to worst according to the average values) is statistically insignificant with a p-value of 0.7002.
 
-#### Tobit Regression - Cycle Time
+#### Tobit Regression - Time
 
 For the last step, we will use Tobit Regression to gain more insight into how each strategy influences the generation if unit-tests.
 
@@ -326,7 +326,7 @@ summary(model_tobit)
 
 Finally, the tobit regression confirms prior analysis regarding different models. With a overall p-value of 0.21848 the choice of model does not statistically significant impact cycle time. Also the coefficients regarding direct model comparisons do not show any statistical significance.
 
-#### Evaluation - Cycle Time
+#### Evaluation - Time
 
 The various statistical tests showed that the prompting strategy as predictor has (statistical significant) influence on the cycle time. In practice, this means that using GitHub Copilot can and should be used to artificially create unit-tests in regards to cycle time.
 
@@ -476,13 +476,13 @@ summary(model_passed)
 
 Also regarding the variable "Passed", the choice of model seems to be a statistically insignificant predictor. This further emphasizes the importance of correct prompting strategies.
 
-## Grouped Analysis - Time & Coverage
+## Grouped Analysis
 
 The following chapter will give insight into the statistical significance of strategy and/or model when you look at both outcome variables at the same time which is important in practice.
 
-### Manova - Cycle Time & **Coverage**
+### Manova - Time & **Coverage**
 
-Here, Manova (Multivaritive Anonv) evaluates whether the vector of means for Time and Coverage differs across the levels of the Model factor.
+Here, Manova (Multivariate Anova) evaluates whether the joint distribution for Time and Coverage differs across the levels of the Model factor.
 
 ##### Prompting Strategy
 
@@ -502,9 +502,31 @@ summary(manova_modelModel)
 
 The manova model shows that the predictor model has a statistically significant impact on both outcome variables at the same time. Meaning, the choice of model most likely does improve the relation of coverage and time.
 
-This might seem contrary to the analysis done in prior chapters and the choice of models might actually play a **minor** role. However, the manova model also shows that the prompting strategy as a predictor with a Pillai's trace of 0.15206, an approximate F-value of 5.4308 and a p-value of 0.0003234 compared to the model with a Pillai's trace of 0.076863, an approximate F-value of 2.6379 and a p-value of 0.03442 is significantly more important than the model. This indicates that the prompting strategy is far more important regarding the combination of cycle time and test coverage.
+This might seem contrary to the analysis done in prior chapters and the choice of models might actually play a **minor** role. However, the manova model also shows that the prompting strategy as a predictor with a Pillai's trace of 0.16897, an approximate F-value of 6.0907 and a p-value of 0.00011 compared to the model with a Pillai's trace of 0.087, an approximate F-value of 3 and a p-value of 0.01904 is significantly more important than the model. This indicates that the prompting strategy is far more important regarding the combination of cycle time and test coverage.
 
 In combination with the isolated statistical tests, the manova model deepens the conclusion that good and advanced prompting strategies are the key to an efficient use of AI tools like GitHub Copilot.
+
+### Manova - Time & Passed
+
+Here, Manova (Multivariate Anova) evaluates whether the combination of Time and "Passed" differs across the different prompting strategies.
+
+#### Prompting Strategy
+
+```{r}
+manova_modelStrategy <- manova(cbind(Time, Passed) ~ Strategy, data = mainData)
+summary(manova_modelStrategy)
+```
+
+As the manova model shows the prompting strategy has an statistical significant impact on successful attempts. In other words, a good prompting strategy helps upholding minimum requirements (and beyond).
+
+#### Model
+
+```{r}
+manova_modelStrategy <- manova(cbind(Time, Passed) ~ Model, data = mainData)
+summary(manova_modelStrategy)
+```
+
+According to this analysis, the choice of model does not impact if the attempts during the experimental phase were successful or not.
 
 ## Other findings/optimizations
 
@@ -540,23 +562,29 @@ To summarize, in the case of the "high"-strategy this consistent of the followin
 
 To generalize this: State clearly and precisely what you want the model to do (=explicit instructions), add as much context as possible, specify the language and assign a role to the model (like Senior Developer). Additionally try to trigger a chain-of-thought process which has shown to greatly increase the quality of the model's responses (e.g. "Think about how your test methods can include normal functionality, edge cases, parametrized and negative tests and then write suitable test(s)." (Wei et al., 2022).
 
-As mentioned at the beginning of this thesis, this is a vast topic and despite the efforts of this thesis, much needs still to explored. It will take a lot more and detailed analysis to truly find the "best prompting strategy". Especially, if thinkng about topics like complete automation (e.g. using the identified strategies to automatically trigger Copilot or different AI tools) , there needs to be a lot more testing and research done to enhance quality and stability of the model's output. This can be only reached by even more refined prompting techniques which are the connection between humans and AI models. This paper works more as a prototype, a concept to testify the importance of prompt engineering and works as a first guidelines what has to be considered and how the output of AI tools like GitHub Copilot can be enhanced.
+As mentioned at the beginning of this thesis, this is a vast topic and despite the efforts of this thesis, much needs still to explored. It will take a lot more and detailed analysis to truly find the "best prompting strategy". Especially, if thinking about topics like complete automation (e.g. using the identified strategies to automatically trigger Copilot or different AI tools) , there needs to be a lot more testing and research done to enhance quality and stability of the model's output. This can be only reached by even more refined prompting techniques which are the connection between humans and AI models. This paper works more as a prototype, a concept to testify the importance of prompt engineering and works as a first guidelines what has to be considered and how the output of AI tools like GitHub Copilot can be enhanced.
 
-To answer the secondary research questions proposed in Chapter 1:
+To answer the secondary research questions proposed in Chapter 1 of the thesis:
 
-Firstly, yes, AI tools like GitHub Copilot can positively affect test coverage and cycle time (cycle time used as a measurement to not only talk about performance but also financial standpoints). This becomes especially apparant, if you look at them in relation to each other. We might not have reached a potential yet, where test coverage rates above 90% can be achieved stably and steadily. However, already the research done in this thesis shows that AI can be a massive time saver and at the same reach consistent test coverage rates (that are at least as high as the current test coverage reached in the specific project at POI - which is about 85% compared to the 81% reached by the "high"-strategy).
+Firstly, regarding reaching test coverage rates of 100%, this paper showed that there is still some instability. In some cases, Copilot runs into errors and does not manage to fulfil the minimum criteria within the 30 minutes time span. For these attempts, the coverage was set to 0% lowering the average test coverage for all files. But, and for the sake of discussion, if the average would only be calculated based off successful attempts (83% or 37 out of 45 attempts) using the \"high\"-strategy, an average test coverage of 93% would be reached. This might not be 100% yet but pushes heavily into that direction. Excluding failed attempts, however, seems nonsensical as especially these cases demand further research and optimization. To conclude, the paper shows that reaching existing test coverage rates of around 80% is already feasible and that more advanced prompting strategies enhance output stability (=less failed attempts). However, Copilot cannot reach test coverage rates of 100% on average yet. This is especially due to the models running into error loops, hallucinations and most likely the complexity of certain code structures.
 
-Secondly, yes, this paper shows clearly that the prompting strategy matters and a sophisticated, advanced and clear prompting strategy positively influences cycle time and test coverage and therefore, it is recommended to opt for these strategies. The more AI will be integrated into existing processes, the more important these strategies will become (this is true for all domains, not just software engineering).
+Furthermore, this paper shows clearly that the prompting strategy matters, and a sophisticated and clear techniques positively influences cycle time and test coverage (and in this regard generate "high quality" unit-tests as they satisfy all set constraints). A possibility to integrate the good prompting strategies into developer workflows is the implementation of GitHub Copilot extensions that leverage the well-founded prompting strategies and make them accessible for all users. This approach was demonstrated by developing the small additional prototype during this thesis.
+
+The research done shows that Copilot has the capabilities to save 75% (30 m cut-off in the experiment vs. 2h minimum current development time) of development time and yet maintaining existing test coverage rates (current test of 85% compared to the 82% reached by the "high"-strategy). This would mean cost savings of 9,84 €s per hour based on the Austrian IT collective bargaining agreement (WKO, 2024).
+
+To conclude, AI tools like an efficient use of GitHub Copilot can positively affect test coverage and cycle time (cycle time used as a measurement to not only talk about performance but also financial standpoints). This becomes especially apparent, if you look at them in relation to each other.
 
 ## Sources
 
-Abdi, H. and Williams, L.J. (2010) \'Tukey\'s honestly significant difference (HSD) test\', in Salkind, N. S. (ed.) *Encyclopedia of research design*. Thousand Oaks, CA: Sage. Available at: https://personal.utdallas.edu/\~herve/abdi-HSD2010-pretty.pdf (Accessed: 1 April 2025).
+Here all sources specifically used in this handbook are listed.
 
-Akoglu, H. (2018) \'User\'s guide to correlation coefficients\', *Turk J Emerg Med*, 18(3), pp. 91--93. Available at: https://pmc.ncbi.nlm.nih.gov/articles/PMC6107969/pdf/main.pdf (Accessed: 1 April 2025).
+Abdi, H. and Williams, L.J. (2010) 'Tukey's honestly significant difference (HSD) test', in Salkind, N. S. (ed.) *Encyclopedia of research design*. Thousand Oaks, CA: Sage. Available at: https://personal.utdallas.edu/\~herve/abdi-HSD2010-pretty.pdf (Accessed: 1 April 2025).
+
+Akoglu, H. (2018) 'User's guide to correlation coefficients', *Turk J Emerg Med*, 18(3), pp. 91--93. Available at: https://pmc.ncbi.nlm.nih.gov/articles/PMC6107969/pdf/main.pdf (Accessed: 1 April 2025).
 
 Huberty, C.J. and Olejnik, S. (2006) Applied MANOVA and discriminant analy-sis. 2nd edn. Hoboken, NJ: John Wiley & Sons. Available at: http://ndl.ethernet.edu.et/bitstream/123456789/27897/1/Carl%20J.%20Huberty%2C_2006.pdf (Accessed: 27 March 2025).
 
-Janse, R.J., Hoekstra, T., Jager, K.J., Zoccali, C., Tripepi, G., Dekker, F.W. and van Diepen, M. (2021) \'Conducting correlation analysis: important limitations and pitfalls\', *Clinical Kidney Journal*, 14(11), pp. 2332--2337. Available at: https://doi.org/10.1093/ckj/sfab085 (Accessed: 1 April 2025).
+Janse, R.J., Hoekstra, T., Jager, K.J., Zoccali, C., Tripepi, G., Dekker, F.W. and van Diepen, M. (2021) 'Conducting correlation analysis: important limitations and pitfalls', *Clinical Kidney Journal*, 14(11), pp. 2332--2337. Available at: https://doi.org/10.1093/ckj/sfab085 (Accessed: 1 April 2025).
 
 Jurafsky, D. and Martin, J.H. (2025) Speech and language processing: an in-troduction to natural language processing, computational linguistics, and speech recognition with language models. 3rd edn. (online) Stanford Universi-ty. Available at: https://web.stanford.edu/\~jurafsky/slp3/5.pdf (Accessed: 1 April 2025).
 
@@ -567,3 +595,5 @@ Kutner, M.H., Nachtsheim, C.J., Neter, J. and Li, W. (2005) Applied linear sta-t
 McDonald, J.F. and Moffitt, R.A. (1980) 'The uses of Tobit analysis', The Re-view of Economics and Statistics, 62(2), pp. 318--321. Available at: http://www.jstor.org/stable/1924766 (Accessed: 1 April 2025).
 
 Wei, J., Wang, X., Schuurmans, D., Bosma, M., Ichter, B., Xia, F., Chi, E., Le, Q. and Zhou, D. (2023) Chain-of-thought prompting elicits reasoning in large language models. Available at: https://doi.org/10.48550/arXiv.2201.11903 (Accessed: 20 January 2025).
+
+Wirtschaftskammer Österreich (2024) *Kollektivvertrag Informationstechnologie 2024*. Available at: https://www.wko.at/oe/kollektivvertrag/kv-informationstechnologie-2024.pdf (Accessed: 20 April 2025).
