@@ -275,7 +275,7 @@ print(t_test_result)
 The pairwise comparison between the two groups "low_low_low" and "high_high_high" confirms the prior analysis done. The difference in prompting strategies is statistically significant with a p-value of 0.000847.
 
 ```{r}
-subset_data <- subset(mainData, Strategy %in% c("medium_medium_medium", "high_high_high")) #best&worst
+subset_data <- subset(mainData, Strategy %in% c("medium_medium_medium", "high_high_high")) #best&medium
 
 subset_data$Strategy <- droplevels(subset_data$Strategy)
 
@@ -506,28 +506,6 @@ This might seem contrary to the analysis done in prior chapters and the choice o
 
 In combination with the isolated statistical tests, the manova model deepens the conclusion that good and advanced prompting strategies are the key to an efficient use of AI tools like GitHub Copilot.
 
-### Manova - Time & Passed
-
-Here, Manova (Multivariate Anova) evaluates whether the combination of Time and "Passed" differs across the different prompting strategies.
-
-#### Prompting Strategy
-
-```{r}
-manova_modelStrategy <- manova(cbind(Time, Passed) ~ Strategy, data = mainData)
-summary(manova_modelStrategy)
-```
-
-As the manova model shows the prompting strategy has an statistical significant impact on successful attempts. In other words, a good prompting strategy helps upholding minimum requirements (and beyond).
-
-#### Model
-
-```{r}
-manova_modelStrategy <- manova(cbind(Time, Passed) ~ Model, data = mainData)
-summary(manova_modelStrategy)
-```
-
-According to this analysis, the choice of model does not impact if the attempts during the experimental phase were successful or not.
-
 ## Other findings/optimizations
 
 This chapter will give insight into findings and leanings from the experimental phase. This has little do with in particular with either prompting strategies or models but applies to the general usage of GitHub Copilot to work more efficiently regardless of the concrete model or prompting strategy used.
@@ -566,11 +544,11 @@ As mentioned at the beginning of this thesis, this is a vast topic and despite t
 
 To answer the secondary research questions proposed in Chapter 1 of the thesis:
 
-Firstly, regarding reaching test coverage rates of 100%, this paper showed that there is still some instability. In some cases, Copilot runs into errors and does not manage to fulfil the minimum criteria within the 30 minutes time span. For these attempts, the coverage was set to 0% lowering the average test coverage for all files. But, and for the sake of discussion, if the average would only be calculated based off successful attempts (83% or 37 out of 45 attempts) using the \"high\"-strategy, an average test coverage of 93% would be reached. This might not be 100% yet but pushes heavily into that direction. Excluding failed attempts, however, seems nonsensical as especially these cases demand further research and optimization. To conclude, the paper shows that reaching existing test coverage rates of around 80% is already feasible and that more advanced prompting strategies enhance output stability (=less failed attempts). However, Copilot cannot reach test coverage rates of 100% on average yet. This is especially due to the models running into error loops, hallucinations and most likely the complexity of certain code structures.
+Firstly, regarding reaching test coverage rates of 100%, this paper showed that there is still some instability. In some cases, Copilot runs into errors and does not manage to fulfil the minimum criteria within the 30 minutes time span. For these attempts, the coverage was set to 0% lowering the average test coverage for all files. But, and for the sake of discussion, if the average would only be calculated based off successful attempts (83% or 37 out of 45 attempts) using the "high"-strategy, an average test coverage of 93% would be reached. This might not be 100% yet but pushes heavily into that direction. Excluding failed attempts, however, seems nonsensical as especially these cases demand further research and optimization. To conclude, the paper shows that reaching existing test coverage rates of around 80% is already feasible and that more advanced prompting strategies enhance output stability (=less failed attempts). However, Copilot cannot reach test coverage rates of 100% on average yet. This is especially due to the models running into error loops, hallucinations and most likely the complexity of certain code structures.
 
 Furthermore, this paper shows clearly that the prompting strategy matters, and a sophisticated and clear techniques positively influences cycle time and test coverage (and in this regard generate "high quality" unit-tests as they satisfy all set constraints). A possibility to integrate the good prompting strategies into developer workflows is the implementation of GitHub Copilot extensions that leverage the well-founded prompting strategies and make them accessible for all users. This approach was demonstrated by developing the small additional prototype during this thesis.
 
-The research done shows that Copilot has the capabilities to save 75% (30 m cut-off in the experiment vs. 2h minimum current development time) of development time and yet maintaining existing test coverage rates (current test of 85% compared to the 82% reached by the "high"-strategy). This would mean cost savings of 9,84 €s per hour based on the Austrian IT collective bargaining agreement (WKO, 2024).
+Thirdly, the research shows that Copilot has the capabilities to save 75% (30 min experimental cut-off vs. 2 h current development time) of the time needed for writing unit-tests per story and yet maintain existing coverage rates (85% versus 82% using the "high"-strategy). This already adds financial value as the output can be enhanced making each hour more valuable. Simply calculating the hourly cost savings illustrates the economic benefit even better. GitHub Copilot Business costs 17,67€ per month, which can be broken down into hourly costs of eleven cents (GitHub, n.d.). The minimum salary is 13.13€/h based on the Austrian IT collective bargaining agreement (WKO, 2024). Therefore, the financial benefit is therefore 13,02€ per hour as saving 75% development time does not mean that Copilot remains inactive during the saved time but can be used for new tasks.
 
 To conclude, AI tools like an efficient use of GitHub Copilot can positively affect test coverage and cycle time (cycle time used as a measurement to not only talk about performance but also financial standpoints). This becomes especially apparent, if you look at them in relation to each other.
 
