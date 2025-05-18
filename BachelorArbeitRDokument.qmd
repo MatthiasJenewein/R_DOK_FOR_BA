@@ -22,7 +22,7 @@ library(readxl)
 
 ## Datamanagement
 
-The basis for the analysis done in this thesis is an experimental phase using GitHub Copilot to explore limitations and possibilities for artificial creation of unit-tests. All the data from the experiments were saved into an excel sheet (1 sheet per model). The excel sheets are now used to create the prompt engineering handbook where the different prompting strategies are analysed and concrete actions are recommended based on the findings.
+The basis for the analysis done in this thesis is an experimental phase using GitHub Copilot to explore limitations and possibilities for artificial creation of unit-tests. All the data from the experiments were saved into an excel sheet (1 sheet per model). In total there are three, equally strong models (ChatGTP o3, Claude 3.5 Sonnet and Google Gemini 2.0 Flash. The excel sheets are now used to create the prompt engineering handbook where the different prompting strategies are analysed and concrete actions are recommended based on the findings.
 
 Here the excel sheets are read in. There is average sheets containing the average values for a quick overview as well as more detailed sheets containing all results for all prompting strategies and models that will be used for creating the comprehensive analysis:
 
@@ -48,7 +48,7 @@ for (sheet in data) {
 }
 ```
 
-Then we can combine the different sheets into one single dataframe:
+Then we can combine the different sheets into one single dataframe to make the analysis easier:
 
 ```{r}
 # Combine your list of sheet names
@@ -63,7 +63,7 @@ allSheets <- c(averageValues, data)
 allData <- do.call(rbind, lapply(allSheets, get))
 ```
 
-In the next step relevant columns will be transformed into Factors to make them available for statistical analysis like t-tests or regression and afterwards all sheets will be transformed into one, single dataframe to make the analysis easier:
+In the next step relevant columns will be transformed into Factors to make them available for statistical analysis:
 
 ```{r}
 allData$Model   <- as.factor(allData[[9]])
@@ -93,9 +93,11 @@ After reading and properly setting up all data, we can start with our analysis.
 
 ## Analysis
 
+The analysis is done based on the prompting strategies and the choice of model. The choice of model is analysed to see if the prompting strategy is independent from outside factors that are difficult to influence such as the concrete LLM and opting for a good prompting allows for an (cos)-efficient use of tools like GitHub Copilot. For more detailed exlanations regarding methodology, please refer to the actual thesis document.
+
 ### Visualization
 
-At first there will be a short visualization to gain a first visual impression based on our average values
+At first there is a short visualization to gain a first visual impression based on our average values
 
 ```{r}
 aggDataTime <- aggregate(Time ~ Strategy, data = avgData, FUN = mean)
@@ -128,6 +130,8 @@ barplot(aggDataCoverage$`Coverage%`,
 
 The bar plot shows a clear trend regarding prompting strategies: The better the prompting strategy, the higher the test coverage. The average test coverage doubles going from low to high.
 
+Now for the choice of model:
+
 ```{r}
 aggDataTimeModel <- aggregate(Time ~ Model, data = avgData, FUN = mean)
 
@@ -158,25 +162,21 @@ barplot(aggDataCoverageModel$`Coverage%`,
 
 The barplot show the average coverage per model. Claude 3.5 Sonnet has the highest test coverage, closely followed by OpenAI o3. Google Gemini 2.0 Flash has the lowest test coverage.
 
-#### Discussion of average values
-
-The bar plots clearly showed that while analyzing each outcome variable independently, the combination must also be considered. Because regarding time Google Gemini is preferable, regarding test coverage it is actually the worst model.
-
 ### Discussion of statistical methods used:
 
 The following chapters contains a small discussion regarding the implemented statistical analysis methods and why they were used.
 
 **Linear Regression**
 
-Linear regression models allow to analyse how the outcome variables (in the context of this thesis "test coverage", „cycle time" and "passed") are influenced by prompting strategies (composed of the three independent variables: "Prompt detail", "Quality of the prompt", and "Level of context") as well as different AI models. (Kutner et al., 2005). In the context of this thesis, using linear regression is highly informative because it gives insight how each prompting strategy as well as models contribute to the out-come variables. This enables future users to opt for better strategies.
+Linear regression models allow to analyse how the outcome variables (in the context of this thesis "test coverage", „cycle time" and "passed") are influenced by prompting strategies (composed of the three independent variables: "Prompt detail", "Quality of the prompt", and "Level of context") as well as different AI models. (Kutner et al., 2005). In the context of this thesis, using linear regression is highly informative because it gives insight how each prompting strategy as well as models contribute to the out-come variables.
 
 **Anova**
 
-Ideal for comparing means across multiple groups (e.g., different AI models or dif-ferent prompting strategies) for a single outcome variable. This can lead to a better understanding if variability regarding the outcome is statistically significant and can be attributed to a specific predictor (Kutner et al., 2005). In the context of this thesis, Anova helps identifying which prompting strategies and/or models lead to better results regarding the outcome variables.
+Ideal for comparing means across multiple groups (e.g., different AI models or different prompting strategies) for a single outcome variable. This can lead to a better understanding if variability regarding the outcome is statistically significant and can be attributed to a specific predictor (Kutner et al., 2005). In the context of this thesis, Anova helps identifying which prompting strategies and/or models lead to better results regarding the outcome variables.
 
 **Manova (Multivariate Anova)**
 
-Manova allows to analyse the effects of each predictor for the outcome variables at the same time. This is particularly useful when trying to analyse how independent variables interact with more than outcome variable. Through this, interactions could be captured that might have been overlooked when looking at each outcome individ-ually (Huberty and Olejnik, 2006).
+Manova allows to analyse the effects of each predictor for the outcome variables at the same time. This is particularly useful when trying to analyse how independent variables interact with more than outcome variable. Through this, interactions could be captured that might have been overlooked when looking at each outcome individually (Huberty and Olejnik, 2006).
 
 This is highly useful as it shows how different prompting strategies affect **both** cycle time and test coverage.
 
@@ -184,13 +184,13 @@ This is highly useful as it shows how different prompting strategies affect **bo
 
 T-tests are useful for comparisons between groups based on the mean. This can be used to examine the influence of single predictors on the outcome variables and dis-cuss the differences between distinct levels of each predictor (Kim, 2015).
 
-This can be particularly useful for this thesis as it shows whether changing specific aspects of the prompting strategy (level of context) can influence the outcomes.
+This is particularly useful for this thesis as it allows i.e. to specifically compare certain prompting strategies with each other.
 
 **Correlation Analysis**
 
-Correlation analysis explores the relationships among independent variable and how strongly each predictor is associated with the outcome variables (Janse et al., 2021). In the context of this thesis, this is valuable as it highlights how prompting strategies are related to high coverage and/or low cycle time.
+Correlation analysis explores the relationships among independent variable and how strongly each predictor is associated with the outcome variables (Janse et al., 2021). In the context of this thesis, this is valuable as it highlights i.e. how prompting strategies are related to high coverage and/or low cycle time.
 
-All in, these methods are used in an attempt to provide a comprehensive overview and statistical evaluation of prompting strategies and their importance for the artificial generation of unit-tests. This is important for developing a profound prompt engineering handbook. Also in the context of this thesis not a complete handbook can be created but based on the findings a relatively extensive prototype should be created and serve as a basis for continous research.
+All in, these methods are used in an attempt to provide a comprehensive overview and statistical evaluation of prompting strategies and their importance for the artificial generation of unit-tests. This is important for developing a profound prompt engineering handbook that enables future readers to opt for better strategies. Also in the context of this thesis not a complete handbook can be created but based on the findings a relatively extensive prototype should be created and serve as a basis for continuous research.
 
 ## Performing (Statistical) Analysis
 
@@ -207,13 +207,17 @@ In the first step, we will have a look at Correlation as a first exploratory pha
 ```{r}
 mainData$StrategyNumeric <- as.numeric(mainData$Strategy)
 
-cor_test_result <- cor.test(mainData$Time, mainData$StrategyNumeric, method = "pearson")
+cor_test_result <- cor.test(mainData$Time, mainData$StrategyNumeric, method = "spearman")
 print(cor_test_result)
 ```
 
-The correlation analysis confirms that there is a strong relationship between cycle time and prompting strategy. A correlation coefficient of -0.29 suggests a slight moderate negative relationship (Akoglu, 2018). The p-value of 0.0005408 as well as the 95% confidence interval confirm the statistical significance of this relationship.
+The correlation analysis confirms that there is a moderate relationship between cycle time and prompting strategy. A correlation coefficient of -0.28suggests a slight moderate negative relationship (Akoglu, 2018). The p-value of 0.001 confirms the statistical significance of this relationship.
 
-Although this may seem low, it already works as a good indicator for the overall hypothesis that good prompting strategies lower the cycle time (or time needed to create unit-tests which then lowers cycle time).
+This already works as a good indicator that good prompting strategies lower the cycle time (or time needed to create unit-tests which then lowers cycle time).
+
+##### Model
+
+It makes no sense to calculate correlation for the model as the different models are not ranked. Contrary, they are deliberately chosen to be equally good and therefore the correlation model would not give any meaningful insight.
 
 #### ANOVA - Time
 
@@ -226,7 +230,7 @@ aov_modelTime <- aov(Time ~ Strategy, data = mainData)
 summary(aov_modelTime)
 ```
 
-The result of the anova test (more specifically the small p-value of 0.00254) shows clearly that there are statistical significant differences between different groups of strategy. Hence, the anova test strongly suggests that prompting strategies is an important variable for predicting time and supports the idea that good prompting techniques are necessary to leverage GitHub Copilot more efficiently and reduce cycle time.
+The result of the anova test (more specifically the p-value of 0.00254) shows clearly that there are statistical significant differences between different groups of strategy. Hence, the anova test strongly suggests that prompting strategies is an important variable for predicting time and supports the idea that good prompting techniques are necessary to leverage GitHub Copilot more efficiently and reduce cycle time.
 
 ##### TukeyHSD
 
@@ -236,7 +240,7 @@ The following code performs a post-hoc analysis on the anova model using TukeyHS
 TukeyHSD(aov_modelTime, "Strategy")
 ```
 
-According to the TukeyHSD test, only the comparison between high_high_high and low_low_low is statistically significant. However, for this it needs to be taken into consideration that time is not the only factor to be considered.
+According to the TukeyHSD test, only the comparison between high_high_high and low_low_low is statistically significant. The difference between medium and high seems to be statistically insignificant. This will be further analysed by t-tests.
 
 ##### Model
 
@@ -255,7 +259,7 @@ The following code performs a post-hoc analysis on the anova model using TukeyHS
 TukeyHSD(aov_model, "Model")
 ```
 
-The TukeyHSD analysis shows no statistical significance for any comparison between the models. The p-value for the comparison between Google Gemini 2.0 Flash and Claude 3.5 Sonnet is close to 0.05 and therefore i could be argued that preferring Claude over Google Gemini would still be beneficial but there is no statistical proof to that.
+The TukeyHSD analysis clearly shows no statistical significance for any comparison between the models.
 
 #### T-Test - Time
 
@@ -283,22 +287,13 @@ t_test_result <- t.test(Time ~ Strategy, data = subset_data)
 print(t_test_result)
 ```
 
-The pairwise comparison between the two groups "medium_medium_medium" and "high_high_high" shows that in isolation the difference is statistically significant (p-value of 0.04623). This is contrary to the p-value from anova. This is because anova adjusts the p-value and analyses the statistical significance across all groups and it that broader context the difference might not be statistical significant anymore. However, this is isolated comparison shows that it is still useful to opt for more detailed and optimized prompting strategies (=high_high_high).
+The pairwise comparison between the two groups "medium_medium_medium" and "high_high_high" shows that in isolation the difference is statistically significant (p-value of 0.04623). This is contrary to the p-value from anova. This is because anova adjusts the p-value and analyses the statistical significance across all groups and it that broader context the difference might not be statistical significant anymore. However, this is isolated comparison shows that it is still useful to opt for more detailed and optimized prompting strategies (=high-Strategy).
 
 ##### Model
 
-```{r}
-subset_dataModel <- subset(mainData, Model %in% c("Google Gemini 2.0 Flash", "Claude 3.5 Sonnet"))
+Based on the clear findings from the TukeyHSD it is not necessary to perform additional T-Tests.
 
-subset_dataModel$Model <- droplevels(subset_dataModel$Model)
-
-levels(subset_dataModel$Model)
-
-t_test_result <- t.test(Time ~ Model, data = subset_dataModel)
-print(t_test_result)
-```
-
-The pairwise comparison between the two most distinct models "Google Gemini 2.0 Flash" and "Claude 3.5 Sonnet"confirms the prior analysis done. The difference between models (comparing best to worst according to the average values) is statistically insignificant with a p-value of 0.7002.
+\newpage
 
 #### Tobit Regression - Time
 
@@ -309,13 +304,17 @@ In the experimental set-up there was an upper time barrier of 30 minutes. Tobit 
 ##### Prompting Strategy
 
 ```{r}
-# 0.5 is the max amount of time I spent on trying to create unit-tests using GitHub Copilot per file, hence its the upper (right border)
+# 0.5 is the max amount of time spent on trying to create unit-tests using GitHub Copilot per file, hence its the upper (right border)
 model_tobit <- tobit(Time ~ Strategy, left = 0, right = 0.5, data = mainData)
 alias(model_tobit)
 summary(model_tobit)
 ```
 
 Finally, the tobit regression confirms prior analysis regarding prompting strategies. With a p-value of only 0.0002 the change from the "low"- prompting strategy to the "high"-prompting strategy is statistically significant. Also a change from the "low"- prompting strategy to the "medium"-prompting strategy is statistically significant as well. However, comparing the p-values of 0.0002 and 0.03 (which is on the edge of statistical significance) highlights the strength of the "high"-prompting strategy.
+
+The p-value of 0.001 from the Wald-statistic confirms that.
+
+\newpage
 
 ##### Model
 
@@ -324,13 +323,15 @@ model_tobit <- tobit(Time ~ Model, left = 0, right = 0.5, data = mainData)
 summary(model_tobit)
 ```
 
-Finally, the tobit regression confirms prior analysis regarding different models. With a overall p-value of 0.21848 the choice of model does not statistically significant impact cycle time. Also the coefficients regarding direct model comparisons do not show any statistical significance.
+Finally, the tobit regression confirms prior analysis regarding different models. With a overall p-value of 0.21848 the choice of model does not statistically significant impact cycle time. Also comparing the coefficients for each model does not show any statistical significance.
+
+The p-value of 0.21848 from the Wald-statistic confirms that.
 
 #### Evaluation - Time
 
-The various statistical tests showed that the prompting strategy as predictor has (statistical significant) influence on the cycle time. In practice, this means that using GitHub Copilot can and should be used to artificially create unit-tests in regards to cycle time.
+The various statistical tests showed that the prompting strategy as predictor has (statistical significant) influence on cycle time. In practice, this means that when using GitHub Copilot to create unit-tests, developers should opt for good prompting strategies in regard to cycle time.
 
-The model however, does not have any statistical significance on cycle time according to the statistical methods conducted. This makes the analysis of correct prompting strategies even more valuable as they seem to have similar effects across different models.
+The model however, does not have any statistical significance on cycle time according to the statistical methods conducted. This makes the analysis of prompting strategies even more valuable as they seem to have similar effects across different models.
 
 ### **Coverage Analysis**
 
@@ -347,7 +348,11 @@ cor_test_result <- cor.test(mainData$`Coverage%`, mainData$StrategyNumeric, meth
 print(cor_test_result)
 ```
 
-The correlation analysis confirms that there is a moderate relationship between coverage and prompting strategy. A correlation coefficient of 0,38 suggests a strong moderate positive relationship (Akoglu, 2018). Additionally, the p-value = 0.0000046 as well as the 95% confidence interval confirm this relationship further.
+The correlation analysis confirms that there is a moderate relationship between coverage and prompting strategy. A correlation coefficient of 0,38 suggests a stronger moderate positive relationship (Akoglu, 2018). Additionally, the p-value = 0.0000046 as well as the 95% confidence interval confirm this relationship further.
+
+##### Model
+
+It makes no sense to calculate correlation for the model as the different models are not ranked. Contrary, they are deliberately chosen to be equally good and therefore the correlation model would not give any meaningful insight.
 
 #### ANOVA - Coverage
 
@@ -364,15 +369,15 @@ The anova model shows that the prompting strategy significantly influences the t
 
 ##### TukeyHSD
 
-The following code performs a post-hoc analysis on the anova model using TukeyHSD in order to see the importance of each level for the predictor strategy.
+The following code performs a post-hoc analysis on the anova model using TukeyHSD in order to see the importance of each level for the predictor strategy (Abdi and Williams, 2010).
 
 ```{r}
 TukeyHSD(aov_coverageStrategy, "Strategy")
 ```
 
-The TukeyHSD method clearly shows that switching from the "low" to either "medium" or "high"-strategy significantly influences the test coverage (=higher test coverage). Especially the change from "low" to "high" stands out with a very small p-value of 0.0000139.s
+The TukeyHSD method clearly shows that switching from the "low" to either "medium" or "high"-strategy significantly influences the test coverage (=higher test coverage). Especially the change from "low" to "high" stands out with a very small p-value of 0.0000139.
 
-The switch from "medium" to "high" however, seems to be statistically insignificant according to TukeyHSD. This will be further analysed using T-Tests. Still, the anova model recommends switching from "low" to "high" instead of "low" to "medium" as the corresponding p-value is much smaller.
+The switch from "medium" to "high" however, seems to be statistically insignificant according to TukeyHSD. This will be further analysed using T-Tests. Nonetheless, the anova model recommends switching from "low" to "high" instead of "low" to "medium" as the corresponding p-value is much smaller.
 
 ##### Model
 
@@ -382,6 +387,12 @@ summary(aov_coverageModel)
 ```
 
 The anova model shows that the choice of model does not significantly influence the test coverage with a p-value of 0.737.
+
+```{r}
+TukeyHSD(aov_coverageModel, "Model")
+```
+
+The TukeyHSD confirms the prior analysis and shows that the choice of the model does not influence the coverage - even when comparing each model against each other.
 
 #### T-Test - Coverage
 
@@ -413,12 +424,9 @@ As already shown by the anova model, the T-Test confirms that the "high"-strateg
 
 ##### Model
 
-```{r}
-t_test_result <- t.test(`Coverage%` ~ Model, data = subset_dataModel)
-print(t_test_result)
-```
+Based on the clear findings from the TukeyHSD it is not necessary to perform additional T-Tests.
 
-The T-Test regarding the choice of model and the influence on test coverage confirms prior analysis and the p-value of 0.4177 clearly labels the choice of model statistically insignificant.
+\newpage
 
 #### Linear Regression - Coverage
 
@@ -433,6 +441,10 @@ summary(model_lmCoverageStrategy)
 
 Finally, the linear model confirms prior analysis regarding different prompting strategies. Both the "medium"-strategy (p-value of 0.00214) as well as the "high"-strategy (p-value of 0.000009) are statistically significant. The F-statistic also shows a p-value of 0.00002 further emphasizing the statistical significance. Showing that a better prompting strategy yields better test coverage. Especially the resulting p-value of the "high"-strategy makes it really clear.
 
+The p-value of 0.00002 from the F-statistic confirms that.
+
+\newpage
+
 ##### Model
 
 ```{r}
@@ -442,15 +454,19 @@ summary(model_lmCoverageModel)
 
 Finally, the linear model confirms prior analysis regarding different models. With an overall p-value of 0.7369 the choice of model does not statistically significant impact cycle time at all.
 
+The p-value of 0.7369 from the F-statistic confirms that.
+
 #### Evaluation - Coverage
 
-Overall, while not as clear as for cycle time, the prompting strategy impacts the test coverage. Generally speaking better and more advanced prompting strategies (=high_high_high) result in better test coverage and hence, should be opted for than "lower" or "medium"-strategies.
+Overall, while not as clear as for cycle time, the prompting strategy impacts the test coverage. Generally speaking better and more advanced prompting strategies (=high_high_high) result in better test coverage and hence, in practice, should be opted for instead of "lower" or "medium"-strategies.
+
+The model however, does not have any statistical significance on cycle time according to the statistical methods conducted. This makes the analysis of prompting strategies even more valuable as they seem to have similar effects across different models.
 
 ## 'Passed' Analysis
 
 The following chapter analyses the effect that prompting strategy and/or model have on the outcome variable "Passed". This is important because part of the experimental setup was a hard cut at 30 Minutes per prompting strategy per file for which unit-tests should be created.
 
-If GitHub Copilot was able to create running tests within 30 Minutes that satisfied the minimal requirements regarding test coverage (at least 60% coverage, edge case tests, negative tests, parametrized tests), the passed variable was set to 1 (=True) and if not, it was set to 0 (=False). At the beginning of the thesis, this was not planned. However, due to the complexity of certain code samples and sometimes hallucinations of the models, not for all selected files/methods Github Copilot could succesfully create proper unit-tests within 30 minutes which is why the "Passed"-variable was introduced.
+If GitHub Copilot was able to create running tests within 30 Minutes that satisfied the minimal requirements regarding test coverage (at least 60% coverage, edge case tests, negative tests, parametrized tests), the passed variable was set to 1 (=True) and if not, it was set to 0 (=False). Due to the complexity of certain code samples and sometimes hallucinations of the models, not for all selected files/methods Github Copilot could successfully create satisfactory unit-tests within 30 minutes which is why the "Passed"-variable was introduced.
 
 The following chapter is a small analysis covering that outcome variable.
 
@@ -461,11 +477,11 @@ Here, Logistic Regression will be used as it is preferable for binary outcome va
 ##### Prompting Strategy
 
 ```{r}
-model_passed <- glm(Passed ~ Strategy, data = mainData, family = binomial)
-summary(model_passed)
+strategy_passed <- glm(Passed ~ Strategy, data = mainData, family = binomial)
+summary(strategy_passed)
 ```
 
-The logistic regression shows that the strategy is an important predictor for "Passed" equaling 1. Especially the "high"-Strategy has an significant impact on that outcome variable with a p-value of 0.00133. This again proves that good prompting strategies are necessary to a more efficient use of GitHub Copilot and AI tools in general.
+The logistic regression shows that the strategy is an important predictor for "Passed" equaling 1. Especially the "high"-Strategy has an significant impact on that outcome variable with a p-value of 0.00133. This again proves that good prompting strategies are necessary to a more efficient use of GitHub Copilot.
 
 ##### Model
 
@@ -474,11 +490,17 @@ model_passed <- glm(Passed ~ Model, data = mainData, family = binomial)
 summary(model_passed)
 ```
 
-Also regarding the variable "Passed", the choice of model seems to be a statistically insignificant predictor. This further emphasizes the importance of correct prompting strategies.
+Also regarding the variable "Passed", the choice of model seems to be a statistically insignificant predictor. This further emphasizes the importance of sophisticated prompting strategies.
+
+#### Evaluation - "Passed"-variable
+
+The passed variable shows that there still some instabilities and reaching test coverage rates of 100% on average seems not possible at the moment. Even the high strategy only achieves a 82% passing rate across all models. The medium strategy achieves a 71% passing rate and the low strategy a 49% rate.
+
+At the same time, this evaluation proves the superiority of the "high"-strategy . When talking about automatic creation of unit-tests a high passing rate (at best close to 100%) seems indispensable and therefore using the strategies providing the highest passing rate seems only logically.
 
 ## Grouped Analysis
 
-The following chapter will give insight into the statistical significance of strategy and/or model when you look at both outcome variables at the same time which is important in practice.
+The following chapter will give insight into the statistical significance of strategy and/or model when you look at both outcome variables at the same time.
 
 ### Manova - Time & **Coverage**
 
@@ -493,6 +515,8 @@ summary(manova_modelStrategy)
 
 The manova model shows that the strategy has a statistically significant impact on both outcome variables at the same time. Meaning, a good prompting strategy leads to an improved relation of coverage and time.
 
+\newpage
+
 ##### Model
 
 ```{r}
@@ -502,25 +526,25 @@ summary(manova_modelModel)
 
 The manova model shows that the predictor model has a statistically significant impact on both outcome variables at the same time. Meaning, the choice of model most likely does improve the relation of coverage and time.
 
-This might seem contrary to the analysis done in prior chapters and the choice of models might actually play a **minor** role. However, the manova model also shows that the prompting strategy as a predictor with a Pillai's trace of 0.16897, an approximate F-value of 6.0907 and a p-value of 0.00011 compared to the model with a Pillai's trace of 0.087, an approximate F-value of 3 and a p-value of 0.01904 is significantly more important than the model. This indicates that the prompting strategy is far more important regarding the combination of cycle time and test coverage.
+This might seem contrary to the analysis done in prior chapters and the choice of models might actually play a **minor** role. However, the manova model also shows that the prompting strategy as a predictor with a Pillai's trace of 0.16897, an approximate F-value of 6.0907 and a p-value of 0.00011 compared to the choice of model as a predictor with a Pillai's trace of 0.087, an approximate F-value of 3 and a p-value of 0.01904 is significantly more important than the chosen model. This indicates that the prompting strategy is far more important predictor.
 
 In combination with the isolated statistical tests, the manova model deepens the conclusion that good and advanced prompting strategies are the key to an efficient use of AI tools like GitHub Copilot.
 
 ## Other findings/optimizations
 
-This chapter will give insight into findings and leanings from the experimental phase. This has little do with in particular with either prompting strategies or models but applies to the general usage of GitHub Copilot to work more efficiently regardless of the concrete model or prompting strategy used.
+This chapter will give insight into findings and leanings from the experimental phase. This applies to the general use of GitHub Copilot regardless of the concrete model or prompting strategy used.
 
 #### Precise commands
 
-In many cases - especially with "lower" "medium" prompting strategies but also with higher prompting strategies - the model suffers from hallucination and tries to change the original files that needed to be tested to make the tests work. A simple "Do not change original methods" completely negates that time wasting side-effect and makes the usage a lot more efficient and also less frustrating.
+In many cases the model suffers from hallucination and tries to change the original files/methods that to make failing tests work. A simple "Do not change original methods" completely negates that time wasting side-effect and makes the usage a lot more efficient and also less frustrating.
 
-Additionally, it helps a lot to mention the minimum requirement regarding test coverage you want the tests to reach (let's say 80%). It is not certain that it will help but often it felt like that it pushes the model in the directions at least.
+Additionally, it helps a lot to mention the minimum you want the model and its output to achieve (i.e. a test coverage of 80%). It is not certain that it will achieve exactly that test coverage but often helps pushing the model in the right direction. Therefore, it is recommended to add a phrase like i.e. "Aim for at least xx% test coverage for the methods provided-" - depending on the expected coverage.
 
 ## Evaluation
 
 Finally, there will be a last discussion regarding all insights gained. This will include a short summary, followed by recommendations based on the findings and lastly, an outlook for further research.
 
-This prompt engineering handbook takes a look and detailly analysed the effects that different prompting strategies and models have on test coverage and cycle time (the less time needed to artificially create good unit-tests, the more the cycle time improves). Using statistical testing each effect and interaction was carefully evaluated and put into perspective. The effects of different model choices were also examined in order to prove that a good prompting strategy makes the difference and not "external" factors like model quality is. Even when there might be differences in models, the prompt engineering handbook showed clearly that having a good and sophisticated prompting strategy is far more (statistically speaking) important.
+This prompt engineering handbook took a look and analysed the effects that different prompting strategies and models have on test coverage and cycle time (the less time needed to artificially create good unit-tests, the more the cycle time improves) in detail. Using statistical testing each effect and interaction was carefully evaluated and put into perspective. The effects of different model choices were also examined in order to prove that a good prompting strategy makes the difference and not "external" factors like model quality is. Even when there might be differences in models, the prompt engineering handbook showed clearly that having a good and sophisticated prompting strategy is far more (statistically speaking) important.
 
 Additionally, during the course of this practice-oriented thesis, it showed that the inclusion of examples, a specific test coverage target as well commands like "Do not change the original methods" greatly help the model to stay focused on it's task, avoid hallucinations and "side-quests" and deliver higher quality unit-tests.
 
@@ -538,40 +562,42 @@ To summarize, in the case of the "high"-strategy this consistent of the followin
 
     "Imagine you are a highly experienced Senior (Java-)Developer with a strong background in writing unit tests. Your task is to create unit-tests for the newly added method(s). Think about how your test methods can include normal functionality, edge cases, parametrized and negative tests and then write suitable test(s). Of course, only add special test cases when they make sense. Additionally, aim for a high test coverage of xx% and do not change the original methods."
 
-To generalize this: State clearly and precisely what you want the model to do (=explicit instructions), add as much context as possible, specify the language and assign a role to the model (like Senior Developer). Additionally try to trigger a chain-of-thought process which has shown to greatly increase the quality of the model's responses (e.g. "Think about how your test methods can include normal functionality, edge cases, parametrized and negative tests and then write suitable test(s)." (Wei et al., 2022).
+To give clear recommendations: (a) Precisely state what you want the model to do (=explicit instructions); (b) add as much context as possible, specify the language and assign a role to the model (e.g. Senior Developer); (c) additionally, try to trigger a chain-of-thought process which has shown to increase the quality of the model's responses (e.g. "Think about how your test methods can include normal functionality, edge cases, parametrized and negative tests and then write suitable test(s)" (Wei et al., 2022a).
 
-As mentioned at the beginning of this thesis, this is a vast topic and despite the efforts of this thesis, much needs still to explored. It will take a lot more and detailed analysis to truly find the "best prompting strategy". Especially, if thinking about topics like complete automation (e.g. using the identified strategies to automatically trigger Copilot or different AI tools) , there needs to be a lot more testing and research done to enhance quality and stability of the model's output. This can be only reached by even more refined prompting techniques which are the connection between humans and AI models. This paper works more as a prototype, a concept to testify the importance of prompt engineering and works as a first guidelines what has to be considered and how the output of AI tools like GitHub Copilot can be enhanced.
+As mentioned at the beginning of this thesis, this is a vast topic and despite the efforts of this thesis, much needs still to explored. It will take a lot more and detailed analysis to truly find the "best prompting strategy". Especially, if thinking about topics like complete automation (e.g. using the identified strategies to automatically trigger Copilot or different AI tools) , there needs to be a lot more testing and research done to enhance quality and stability of the model's output. This can be only reached by even more refined prompting techniques. This handbook works more as a prototype, a concept to testify the importance of prompt engineering and works as a first guideline what has to be considered and how the output of AI tools like GitHub Copilot can be enhanced via prompting strategies.
 
-To answer the secondary research questions proposed in Chapter 1 of the thesis:
+To answer the secondary research questions proposed in Chapter 1 "Introduction" of the thesis:
 
-Firstly, regarding reaching test coverage rates of 100%, this paper showed that there is still some instability. In some cases, Copilot runs into errors and does not manage to fulfil the minimum criteria within the 30 minutes time span. For these attempts, the coverage was set to 0% lowering the average test coverage for all files. But, and for the sake of discussion, if the average would only be calculated based off successful attempts (83% or 37 out of 45 attempts) using the "high"-strategy, an average test coverage of 93% would be reached. This might not be 100% yet but pushes heavily into that direction. Excluding failed attempts, however, seems nonsensical as especially these cases demand further research and optimization. To conclude, the paper shows that reaching existing test coverage rates of around 80% is already feasible and that more advanced prompting strategies enhance output stability (=less failed attempts). However, Copilot cannot reach test coverage rates of 100% on average yet. This is especially due to the models running into error loops, hallucinations and most likely the complexity of certain code structures.
+The first research question on meeting test coverage rates of 100%, has shown that this is not possible yet as Copilot sometimes runs into hallucinations and does not man-age to fulfil the criteria within the 30 minutes time span. For these attempts, the coverage was set to 0% lowering the average test coverage for all files. Nevertheless, and for the sake of discussion, if the average was only calculated based on successful attempts (82% or 37/45 attempts) using the "high"-strategy, an average test coverage of 93% would be reached. This is not a 100% coverage yet but pushes heavily into that direction. Excluding failed attempts, however, seems nonsensical as notably these cases demand further research. To conclude, reaching existing test coverage rates of around 80% is already feasible and that more advanced prompting strategies enhance output stability (=less failed attempts). Copilot, however, cannot reach test coverage rates of 100% yet. This is due to the models running into errors, hallucinations and most likely the complexity of certain code structures.
 
-Furthermore, this paper shows clearly that the prompting strategy matters, and a sophisticated and clear techniques positively influences cycle time and test coverage (and in this regard generate "high quality" unit-tests as they satisfy all set constraints). A possibility to integrate the good prompting strategies into developer workflows is the implementation of GitHub Copilot extensions that leverage the well-founded prompting strategies and make them accessible for all users. This approach was demonstrated by developing the small additional prototype during this thesis.
+Regarding the second research question, this thesis clearly shows that the prompting strategy matters, and sophisticated techniques positively influence cycle time and test coverage (and in this sense generate "high quality" unit-tests as they satisfy all constraints). A possibility to integrate good prompting strategies into developer work-flows is the implementation of GitHub Copilot extensions that leverage the well-founded prompting strategies and make them accessible for all users.
 
-Thirdly, the research shows that Copilot has the capabilities to save 75% (30 min experimental cut-off vs. 2 h current development time) of the time needed for writing unit-tests per story and yet maintain existing coverage rates (85% versus 82% using the "high"-strategy). This already adds financial value as the output can be enhanced making each hour more valuable. Simply calculating the hourly cost savings illustrates the economic benefit even better. GitHub Copilot Business costs 17,67€ per month, which can be broken down into hourly costs of eleven cents (GitHub, n.d.). The minimum salary is 13.13€/h based on the Austrian IT collective bargaining agreement (WKO, 2024). Therefore, the financial benefit is therefore 13,02€ per hour as saving 75% development time does not mean that Copilot remains inactive during the saved time but can be used for new tasks.
+In respect to the third research question, the thesis shows that Copilot has the capabilities to save 75% (30 min experimental cut-off vs. 2 h current development time) of the time needed for writing unit-tests per story and yet maintain existing coverage rates (85% versus 82% using the "high"-strategy). This already adds financial value as the output can be enhanced making each hour more valuable. Simply calculating the hourly cost savings illustrates the economic benefit even better: GitHub Copilot Business costs 17.67€ per month, which can be broken down into an hourly cost rate of eleven cents (GitHub, n.d.). The minimum salary is 13.13€/h based on the Austrian IT collective bargaining agreement (WKO, 2024). The financial benefit is therefore 13.02€ or 99% per hour for writing unit-tests. At the same, utilizing GitHub Copilot saves 75% development time for writing unit-tests per story.
 
-To conclude, AI tools like an efficient use of GitHub Copilot can positively affect test coverage and cycle time (cycle time used as a measurement to not only talk about performance but also financial standpoints). This becomes especially apparent, if you look at them in relation to each other.
+To conclude, AI tools like an efficient use of GitHub Copilot can positively affect test coverage and cycle time (cycle time used as a measurement to not only talk about time but also financial benefits). This becomes especially apparent, if you look at the prompting strategies in relation/compared to each other.
+
+\newpage
 
 ## Sources
 
-Here all sources specifically used in this handbook are listed.
+Here all sources specifically used in this handbook are listed (they are also listed in the reference list of the main thesis document).
 
-Abdi, H. and Williams, L.J. (2010) 'Tukey's honestly significant difference (HSD) test', in Salkind, N. S. (ed.) *Encyclopedia of research design*. Thousand Oaks, CA: Sage. Available at: https://personal.utdallas.edu/\~herve/abdi-HSD2010-pretty.pdf (Accessed: 1 April 2025).
+Abdi, H. and Williams, L.J. (2010) 'Tukey's honestly significant difference (HSD) test', in Salkind, N.S. (ed.) *Encyclopedia of research design*. Thousand Oaks, CA: Sage. Available at: https://personal.utdallas.edu/\~herve/abdi-HSD2010-pretty.pdf (Accessed: 1 April 2025).
 
-Akoglu, H. (2018) 'User's guide to correlation coefficients', *Turk J Emerg Med*, 18(3), pp. 91--93. Available at: https://pmc.ncbi.nlm.nih.gov/articles/PMC6107969/pdf/main.pdf (Accessed: 1 April 2025).
+Akoglu, H. (2018) 'User's guide to correlation coefficients', *Turkish Journal of Emergency Medicine*, 18(3), pp.91--93. Available at: https://pmc.ncbi.nlm.nih.gov/articles/PMC6107969/pdf/main.pdf (Accessed: 1 April 2025).
 
-Huberty, C.J. and Olejnik, S. (2006) Applied MANOVA and discriminant analy-sis. 2nd edn. Hoboken, NJ: John Wiley & Sons. Available at: http://ndl.ethernet.edu.et/bitstream/123456789/27897/1/Carl%20J.%20Huberty%2C_2006.pdf (Accessed: 27 March 2025).
+Huberty, C.J. and Olejnik, S. (2006) *Applied MANOVA and discriminant analysis*. 2nd edn. Hoboken, NJ: John Wiley & Sons. Available at: http://ndl.ethernet.edu.et/bitstream/123456789/27897/1/Carl%20J.%20Huberty%2C_2006.pdf (Accessed: 27 March 2025).
 
-Janse, R.J., Hoekstra, T., Jager, K.J., Zoccali, C., Tripepi, G., Dekker, F.W. and van Diepen, M. (2021) 'Conducting correlation analysis: important limitations and pitfalls', *Clinical Kidney Journal*, 14(11), pp. 2332--2337. Available at: https://doi.org/10.1093/ckj/sfab085 (Accessed: 1 April 2025).
+Janse, R.J., Hoekstra, T., Jager, K.J., Zoccali, C., Tripepi, G., Dekker, F.W. and van Diepen, M. (2021) 'Conducting correlation analysis: important limita-tions and pitfalls', Clinical Kidney Journal, 14(11), pp.2332--2337. Available at: https://doi.org/10.1093/ckj/sfab085 (Accessed: 1 April 2025).
 
-Jurafsky, D. and Martin, J.H. (2025) Speech and language processing: an in-troduction to natural language processing, computational linguistics, and speech recognition with language models. 3rd edn. (online) Stanford Universi-ty. Available at: https://web.stanford.edu/\~jurafsky/slp3/5.pdf (Accessed: 1 April 2025).
+Jurafsky, D. and Martin, J.H. (2025) *Speech and language processing: an introduction to natural language processing, computational linguistics, and speech recognition with language models*. 3rd edn. (online) Stanford University. Available at: https://web.stanford.edu/\~jurafsky/slp3/5.pdf (Accessed: 28 March 2025).
 
-Kim, T.K. (2015) 'T test as a parametric statistic', Korean Journal of Anaes-thesiology, 68(6), pp. 540--546. Available at: https://doi.org/10.4097/kjae.2015.68.6.540 (Accessed: 1 April 2025).
+Kim, T.K. (2015) 'T test as a parametric statistic', *Korean Journal of Anaesthesiology*, 68(6), pp.540--546. Available at: https://doi.org/10.4097/kjae.2015.68.6.540 (Accessed: 1 April 2025).
 
-Kutner, M.H., Nachtsheim, C.J., Neter, J. and Li, W. (2005) Applied linear sta-tistical models. 5th edn. Boston: McGraw-Hill/Irwin. Available at: https://users.stat.ufl.edu/\~winner/sta4211/ALSM_5Ed_Kutner.pdf (Accessed: 1 April 2025).
+Kutner, M.H., Nachtsheim, C.J., Neter, J. and Li, W. (2005) *Applied linear statistical models*. 5th edn. Boston: McGraw-Hill/Irwin. Available at: https://users.stat.ufl.edu/\~winner/sta4211/ALSM_5Ed_Kutner.pdf (Accessed: 1 April 2025).
 
-McDonald, J.F. and Moffitt, R.A. (1980) 'The uses of Tobit analysis', The Re-view of Economics and Statistics, 62(2), pp. 318--321. Available at: http://www.jstor.org/stable/1924766 (Accessed: 1 April 2025).
+McDonald, J.F. and Moffitt, R.A. (1980) 'The uses of Tobit analysis', *The Review of Economics and Statistics*, 62(2), pp.318--321. Available at: http://www.jstor.org/stable/1924766 (Accessed: 1 April 2025).
 
-Wei, J., Wang, X., Schuurmans, D., Bosma, M., Ichter, B., Xia, F., Chi, E., Le, Q. and Zhou, D. (2023) Chain-of-thought prompting elicits reasoning in large language models. Available at: https://doi.org/10.48550/arXiv.2201.11903 (Accessed: 20 January 2025).
+Wei, J., Wang, X., Schuurmans, D., Bosma, M., Ichter, B., Xia, F., Chi, E., Le, Q. and Zhou, D. (2022b) 'Chain-of-thought prompting elicits reasoning in large language models', in *Proceedings of the 36th Conference on Neural Information Processing Systems (NeurIPS 2022)*. Available at: https://openreview.net/pdf?id=\_VjQlMeSB_J (Accessed: 1 March 2025).
 
-Wirtschaftskammer Österreich (2024) *Kollektivvertrag Informationstechnologie 2024*. Available at: https://www.wko.at/oe/kollektivvertrag/kv-informationstechnologie-2024.pdf (Accessed: 20 April 2025).
+Wirtschaftskammer Österreich (2024) *Kollektivvertrag Informationstechnologie 2024.* Available at: https://www.wko.at/oe/kollektivvertrag/kv-informationstechnologie-2024.pdf (Accessed: 20 April 2025).
