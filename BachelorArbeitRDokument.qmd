@@ -582,22 +582,22 @@ To conclude, AI tools like an efficient use of GitHub Copilot can positively aff
 
 Here all sources specifically used in this handbook are listed (they are also listed in the reference list of the main thesis document).
 
-Abdi, H. and Williams, L.J. (2010) 'Tukey's honestly significant difference (HSD) test', in Salkind, N.S. (ed.) *Encyclopedia of research design*. Thousand Oaks, CA: Sage. Available at: https://personal.utdallas.edu/\~herve/abdi-HSD2010-pretty.pdf (Accessed: 1 April 2025).
+Abdi, H. and Williams, L.J. (2010) 'Tukey's honestly significant difference (HSD) test', in Salkind, N.S. (ed.) *Encyclopedia of research design*. Thousand Oaks, CA: Sage. Available at: <https://personal.utdallas.edu/~herve/abdi-HSD2010-pretty.pdf> (Accessed: 1 April 2025).
 
-Akoglu, H. (2018) 'User's guide to correlation coefficients', *Turkish Journal of Emergency Medicine*, 18(3), pp.91--93. Available at: https://pmc.ncbi.nlm.nih.gov/articles/PMC6107969/pdf/main.pdf (Accessed: 1 April 2025).
+Akoglu, H. (2018) *\'*User\'s guide to correlation coefficients*\', Turkish Journal Emergency Medicine, 18(3), pp. 91-93.* <https://doi.org/10.1016/j.tjem.2018.08.001>
 
-Huberty, C.J. and Olejnik, S. (2006) *Applied MANOVA and discriminant analysis*. 2nd edn. Hoboken, NJ: John Wiley & Sons. Available at: http://ndl.ethernet.edu.et/bitstream/123456789/27897/1/Carl%20J.%20Huberty%2C_2006.pdf (Accessed: 27 March 2025).
+Huberty, C.J. and Olejnik, S. (2006) *Applied MANOVA and discriminant analysis*. 2nd edn. Hoboken, NJ: John Wiley & Sons. Available at: <http://ndl.ethernet.edu.et/bitstream/123456789/27897/1/Carl%20J.%20Huberty%2C_2006.pdf> (Accessed: 27 March 2025).
 
-Janse, R.J., Hoekstra, T., Jager, K.J., Zoccali, C., Tripepi, G., Dekker, F.W. and van Diepen, M. (2021) 'Conducting correlation analysis: important limita-tions and pitfalls', Clinical Kidney Journal, 14(11), pp.2332--2337. Available at: https://doi.org/10.1093/ckj/sfab085 (Accessed: 1 April 2025).
+Janse, R.J., Hoekstra, T., Jager, K.J., Zoccali, C., Tripepi, G., Dekker, F.W. and van Diepen, M. (2021) 'Conducting correlation analysis: important limita-tions and pitfalls', Clinical Kidney Journal, 14(11), pp.2332--2337. <https://doi.org/10.1093/ckj/sfab085>
 
-Jurafsky, D. and Martin, J.H. (2025) *Speech and language processing: an introduction to natural language processing, computational linguistics, and speech recognition with language models*. 3rd edn. (online) Stanford University. Available at: https://web.stanford.edu/\~jurafsky/slp3/5.pdf (Accessed: 28 March 2025).
+Jurafsky, D. and Martin, J.H. (2025) *Speech and language processing: an introduction to natural language processing, computational linguistics, and speech recognition with language models*. 3rd edn. (online) Stanford University. Available at: <https://web.stanford.edu/~jurafsky/slp3/5.pdf> (Accessed: 28 March 2025).
 
-Kim, T.K. (2015) 'T test as a parametric statistic', *Korean Journal of Anaesthesiology*, 68(6), pp.540--546. Available at: https://doi.org/10.4097/kjae.2015.68.6.540 (Accessed: 1 April 2025).
+Kim, T.K. (2015) 'T test as a parametric statistic', *Korean Journal of Anaesthesiology*, 68(6), pp.540--546. <https://doi.org/10.4097/kjae.2015.68.6.540>
 
-Kutner, M.H., Nachtsheim, C.J., Neter, J. and Li, W. (2005) *Applied linear statistical models*. 5th edn. Boston: McGraw-Hill/Irwin. Available at: https://users.stat.ufl.edu/\~winner/sta4211/ALSM_5Ed_Kutner.pdf (Accessed: 1 April 2025).
+Kutner, M.H., Nachtsheim, C.J., Neter, J. and Li, W. (2005) *Applied linear statistical models*. 5th edn. Boston: McGraw-Hill/Irwin. Available at: <https://users.stat.ufl.edu/~winner/sta4211/ALSM_5Ed_Kutner.pdf> (Accessed: 1 April 2025).
 
-McDonald, J.F. and Moffitt, R.A. (1980) 'The uses of Tobit analysis', *The Review of Economics and Statistics*, 62(2), pp.318--321. Available at: http://www.jstor.org/stable/1924766 (Accessed: 1 April 2025).
+McDonald, J.F. and Moffitt, R.A. (1980) 'The uses of Tobit analysis', *The Review of Economics and Statistics*, 62(2), pp.318--321. Available at: <https://webdoc.agsci.colostate.edu/koontz/arec-econ535/papers/mcdonald%20moffitt%20(restat%201980).pdf>(Accessed: 1 April 2025).
 
-Wei, J., Wang, X., Schuurmans, D., Bosma, M., Ichter, B., Xia, F., Chi, E., Le, Q. and Zhou, D. (2022b) 'Chain-of-thought prompting elicits reasoning in large language models', in *Proceedings of the 36th Conference on Neural Information Processing Systems (NeurIPS 2022)*. Available at: https://openreview.net/pdf?id=\_VjQlMeSB_J (Accessed: 1 March 2025).
+Wei, J., Wang, X., Schuurmans, D., Bosma, M., Ichter, B., Xia, F., Chi, E., Le, Q. and Zhou, D. (2022b) 'Chain-of-thought prompting elicits reasoning in large language models', in *Proceedings of the 36th Conference on Neural Information Processing Systems (NeurIPS 2022)*. *)* \[online\]. Available at: <https://openreview.net/forum?id=_VjQlMeSB_J>
 
-Wirtschaftskammer Österreich (2024) *Kollektivvertrag Informationstechnologie 2024.* Available at: https://www.wko.at/oe/kollektivvertrag/kv-informationstechnologie-2024.pdf (Accessed: 20 April 2025).
+Wirtschaftskammer Österreich (2024) *Kollektivvertrag Informationstechnologie 2024.* Available at: <https://www.wko.at/oe/kollektivvertrag/kv-informationstechnologie-2024.pdf> (Accessed: 20 April 2025).
